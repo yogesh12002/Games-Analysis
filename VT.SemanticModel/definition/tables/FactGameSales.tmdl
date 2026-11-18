@@ -1,0 +1,205 @@
+table FactGameSales
+	lineageTag: cc04744d-bfd3-4f02-861e-52732c2ea46f
+
+	column img
+		dataType: string
+		lineageTag: 5cb7af65-52a0-4600-818b-2f656abe25b2
+		summarizeBy: none
+		sourceColumn: img
+
+		annotation SummarizationSetBy = Automatic
+
+	column title
+		dataType: string
+		lineageTag: 8a63bc70-feb8-47a6-a027-25b038f61df0
+		summarizeBy: none
+		sourceColumn: title
+
+		annotation SummarizationSetBy = Automatic
+
+	column console
+		dataType: string
+		lineageTag: 8ea8d960-8069-40b8-a23c-c9f34b7b7c98
+		summarizeBy: none
+		sourceColumn: console
+
+		annotation SummarizationSetBy = Automatic
+
+	column genre
+		dataType: string
+		lineageTag: 79c91e05-00bf-4595-84f7-29a8a7638143
+		summarizeBy: none
+		sourceColumn: genre
+
+		annotation SummarizationSetBy = Automatic
+
+	column publisher
+		dataType: string
+		lineageTag: a0e41b5d-ef24-464e-9bf5-9667fdb76552
+		summarizeBy: none
+		sourceColumn: publisher
+
+		annotation SummarizationSetBy = Automatic
+
+	column developer
+		dataType: string
+		lineageTag: 7161d64e-7470-47d3-b1bb-1c5eb987ed17
+		summarizeBy: none
+		sourceColumn: developer
+
+		annotation SummarizationSetBy = Automatic
+
+	column critic_score
+		dataType: double
+		lineageTag: df1eb72e-fdb4-4998-9e04-f852f8588408
+		summarizeBy: sum
+		sourceColumn: critic_score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_sales
+		dataType: double
+		lineageTag: 0dbaf4ae-d46d-4c1e-99b7-19ab7e985a15
+		summarizeBy: sum
+		sourceColumn: total_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column na_sales
+		dataType: double
+		lineageTag: 3ef4ac25-839a-4679-83c1-cf71f23fd383
+		summarizeBy: sum
+		sourceColumn: na_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column jp_sales
+		dataType: double
+		lineageTag: d936b1a4-a5dd-4c77-a1b7-3e6a02550fa5
+		summarizeBy: sum
+		sourceColumn: jp_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pal_sales
+		dataType: double
+		lineageTag: 81173275-9ca3-48e1-a009-6f2f31aea017
+		summarizeBy: sum
+		sourceColumn: pal_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column other_sales
+		dataType: double
+		lineageTag: b06826b2-4cba-4194-aac3-28f117c3f569
+		summarizeBy: sum
+		sourceColumn: other_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column release_date
+		dataType: string
+		lineageTag: ba9aecc2-f294-4fb4-8c4e-f4ede993b143
+		summarizeBy: none
+		sourceColumn: release_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_update
+		dataType: string
+		lineageTag: 0a638d69-24f1-4c5f-b67f-1fb8b7fec251
+		summarizeBy: none
+		sourceColumn: last_update
+
+		annotation SummarizationSetBy = Automatic
+
+	column Consolekey
+		dataType: int64
+		formatString: 0
+		lineageTag: 772086ff-4731-4b61-9240-e855edd6f316
+		summarizeBy: sum
+		sourceColumn: Consolekey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Datekey
+		dataType: int64
+		formatString: 0
+		lineageTag: ba69809a-7e7b-425f-9df1-5de83ba40141
+		summarizeBy: none
+		sourceColumn: Datekey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Developerkey
+		dataType: int64
+		formatString: 0
+		lineageTag: 39e9eed4-229b-4c7a-a049-5a92ccc34d89
+		summarizeBy: none
+		sourceColumn: Developerkey
+
+		annotation SummarizationSetBy = Automatic
+
+	column GameKey
+		dataType: int64
+		formatString: 0
+		lineageTag: d042e188-1015-4d60-abb1-9aa73c8845c6
+		summarizeBy: none
+		sourceColumn: GameKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column genrekey
+		dataType: int64
+		formatString: 0
+		lineageTag: 95b0f167-d4c7-4c65-b5c9-192079040fb5
+		summarizeBy: sum
+		sourceColumn: genrekey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Publisherkey
+		dataType: int64
+		formatString: 0
+		lineageTag: db4ece17-036a-451c-8ffe-d120d7006478
+		summarizeBy: sum
+		sourceColumn: Publisherkey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactGameSales = m
+		mode: import
+		source =
+				let
+				  Source = Csv.Document(File.Contents("C:\Users\ygupt\Desktop\og\PowerBi AND Excel\csv\Assignment 4 - Video Games Sales (1980-2024) - Raw.csv"), [Delimiter = ",", Columns = 14, QuoteStyle = QuoteStyle.None]),
+				  #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"img", type text}, {"title", type text}, {"console", type text}, {"genre", type text}, {"publisher", type text}, {"developer", type text}, {"critic_score", type number}, {"total_sales", type number}, {"na_sales", type number}, {"jp_sales", type number}, {"pal_sales", type number}, {"other_sales", type number}, {"release_date", type text}, {"last_update", type text}}, "en-US"),
+				  #"Filtered rows" = Table.SelectRows(#"Changed column type", each ([developer] <> null and [developer] <> "") and ([critic_score] <> null and [critic_score] <> "") and ([total_sales] <> null and [total_sales] <> "") and ([na_sales] <> null and [na_sales] <> "") and ([jp_sales] <> null and [jp_sales] <> "") and ([pal_sales] <> null and [pal_sales] <> "") and ([other_sales] <> null and [other_sales] <> "") and ([last_update] <> null and [last_update] <> "")),
+				  #"Merged queries" = Table.NestedJoin(#"Filtered rows", {"console"}, DimConsole, {"console"}, "DimConsole", JoinKind.LeftOuter),
+				  #"Expanded DimConsole" = Table.ExpandTableColumn(#"Merged queries", "DimConsole", {"Consolekey"}, {"Consolekey"}),
+				  #"Added Datekey" = Table.AddColumn(#"Expanded DimConsole", "Datekey", each let d = try Date.From([release_date]) otherwise null in if d = null then null else Date.Year(d) * 10000 + Date.Month(d) * 100 + Date.Day(d), Int64.Type),
+				  #"Merged queries 2" = Table.NestedJoin(#"Added Datekey", {"developer"}, DimDeveloper, {"developer"}, "DimDeveloper", JoinKind.LeftOuter),
+				  #"Expanded DimDeveloper" = Table.ExpandTableColumn(#"Merged queries 2", "DimDeveloper", {"Developerkey"}, {"Developerkey"}),
+				  #"Merged queries 3" = Table.NestedJoin(#"Expanded DimDeveloper", {"title"}, DimGame, {"title"}, "DimGame", JoinKind.LeftOuter),
+				  #"Expanded DimGame" = Table.ExpandTableColumn(#"Merged queries 3", "DimGame", {"GameKey"}, {"GameKey"}),
+				  #"Merged queries 4" = Table.NestedJoin(#"Expanded DimGame", {"genre"}, DimGenre, {"genre"}, "DimGenre", JoinKind.LeftOuter),
+				  #"Expanded DimGenre" = Table.ExpandTableColumn(#"Merged queries 4", "DimGenre", {"genrekey"}, {"genrekey"}),
+				  #"Merged queries 5" = Table.NestedJoin(#"Expanded DimGenre", {"publisher"}, DimPublisher, {"publisher"}, "DimPublisher", JoinKind.LeftOuter),
+				  #"Expanded DimPublisher" = Table.ExpandTableColumn(#"Merged queries 5", "DimPublisher", {"Publisherkey"}, {"Publisherkey"})
+				in
+				  #"Expanded DimPublisher"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,29 @@
+relationship AutoDetected_57c6c62a-4383-46e5-9d80-32a836213eae
+	fromColumn: FactGameSales.console
+	toColumn: DimConsole.console
+
+relationship AutoDetected_59378f19-99f1-423b-99db-160949091160
+	fromColumn: FactGameSales.genre
+	toColumn: DimGenre.genre
+
+relationship AutoDetected_06ec0afb-5799-4411-b0d7-c82bbbf521a5
+	fromColumn: FactGameSales.publisher
+	toColumn: DimPublisher.publisher
+
+relationship AutoDetected_6413afcb-9337-42d2-808b-8f5caab3ca66
+	fromColumn: FactGameSales.Datekey
+	toColumn: DimDate.Datekey
+
+relationship AutoDetected_ef356802-b905-491f-962e-a65827177bfb
+	fromColumn: FactGameSales.Developerkey
+	toColumn: DimDeveloper.Developerkey
+
+relationship AutoDetected_b7c90a92-0dc8-4fbe-b4aa-83875ad56a5c
+	fromColumn: FactGameSales.GameKey
+	toColumn: DimGame.GameKey
+
+relationship b46b2671-a2a9-4cc4-8d4a-2088fd1f2425
+	joinOnDateBehavior: datePartOnly
+	fromColumn: DimDate.release_date
+	toColumn: LocalDateTable_f23fdcf6-d80c-42a3-8939-133df0893fbe.Date
+

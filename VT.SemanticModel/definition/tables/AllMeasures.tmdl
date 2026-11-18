@@ -1,0 +1,189 @@
+table AllMeasures
+	lineageTag: c3468ca2-d2b3-4968-b98e-33ed0d683a71
+
+	measure 'Total Sales' = SUM(FactGameSales[total_sales])
+		lineageTag: d85ca7a6-30e1-42b1-9783-a10395923f4d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'NA Sales' = SUM(FactGameSales[na_sales])
+		lineageTag: 7eab6698-d9a3-4259-96dd-8166dec3fa2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'JP Sales' = SUM(FactGameSales[jp_sales])
+		lineageTag: 8a749f28-c1c4-458d-bee1-be7c45e81ed0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PAL Sales' = SUM(FactGameSales[pal_sales])
+		lineageTag: 68a215fe-d817-44e0-8315-5bd32a3a2266
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Other Sales' = SUM(FactGameSales[other_sales])
+		lineageTag: a64032c4-f445-49b0-8791-ce017a09c1e1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Games' = DISTINCTCOUNT(FactGameSales[GameKey])
+		formatString: 0
+		lineageTag: 6e555db1-793f-46ef-945f-4f64d7783002
+
+	measure 'Average Critic Score' =
+			
+			AVERAGE(FactGameSales[critic_score])
+		lineageTag: 1d919d2b-9a63-4d37-99e3-aec332ea7038
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Highest Critic Score' =
+			
+			MAX(FactGameSales[critic_score])
+		lineageTag: edc89560-8e38-4d0a-8bbf-9df94b139fbe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Titles' = DISTINCTCOUNT(DimGame[title])
+		formatString: 0
+		lineageTag: f8ddfafd-c926-48f2-b01b-e8e1fdec1c24
+
+	measure 'Avg Sales Per Game' =
+			
+			DIVIDE([Total Sales],[Total Titles])
+		lineageTag: 325e1f11-ff37-4f93-98f1-9c983d30332b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Previous Year Sales' =
+			
+			VAR SelectedYear =
+			    SELECTEDVALUE(DimDate[year])
+			RETURN
+			    IF(
+			        ISBLANK(SelectedYear),
+			        BLANK(),
+			        CALCULATE(
+			            [Total Sales],
+			            REMOVEFILTERS(DimDate),
+			            DimDate[year] = SelectedYear - 1
+			        )
+			    )
+		lineageTag: e51786f1-7402-44d0-8c0b-36591d20e219
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sales Growth (YoY)' =
+			
+			VAR CurrentSales = [Total Sales]
+			VAR PreviousSales = [Previous Year Sales]
+			RETURN
+			    DIVIDE(
+			        CurrentSales - PreviousSales,
+			        PreviousSales
+			    )
+		lineageTag: 6e199cec-5041-4ecb-861a-affce0d8d36c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top Platform Market Share' =
+			
+			VAR TopPlatformSales =
+			    MAXX(
+			        ALLSELECTED(DimConsole[console]),
+			        CALCULATE([Total Sales])
+			    )
+			VAR AllPlatformSales =
+			    CALCULATE(
+			        [Total Sales],
+			        REMOVEFILTERS(DimConsole[console])
+			    )
+			RETURN
+			    DIVIDE(
+			        TopPlatformSales,
+			        AllPlatformSales,
+			        0
+			    )
+		formatString: 0.0%
+		lineageTag: ee0b080c-e534-4865-b4ca-a773b9577573
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Best Selling Genre' =
+			
+			VAR GenreRanking =
+			    TOPN(
+			        1,
+			        ALLSELECTED(DimGenre[genre]),
+			        [Total Sales],
+			        DESC
+			    )
+			RETURN
+			    CONCATENATEX(
+			        GenreRanking,
+			        DimGenre[genre],
+			        ", "
+			    )
+		lineageTag: bdda7109-1b78-43e9-a5b5-3d2eb837a089
+
+	measure 'Top Publisher' =
+			
+			VAR PublisherRanking =
+			    TOPN(
+			        1,
+			        ALLSELECTED(DimPublisher[publisher]),
+			        [Total Sales],
+			        DESC
+			    )
+			RETURN
+			    CONCATENATEX(
+			        PublisherRanking,
+			        DimPublisher[publisher],
+			        ", "
+			    )
+		lineageTag: 59f91d12-81dc-465f-801c-b04d3474dcfd
+
+	measure 'Total Genres' =
+			
+			DISTINCTCOUNT(DimGenre[genre])
+		formatString: 0
+		lineageTag: 6ee8a866-23bf-474b-9ae6-f3b0476c5f85
+
+	measure 'Count of title' = DISTINCTCOUNT(DimGame[title])
+		formatString: 0
+		lineageTag: c6e416b5-768f-4528-be5f-5be5c4ed64c5
+
+	measure 'Total Platforms' = DISTINCTCOUNT(FactGameSales[console])
+		formatString: 0
+
+	measure 'Leading Platform Sales' = MAXX(ALLSELECTED(DimConsole[console]), [Total Sales])
+		formatString: 0.00
+
+	measure 'Best-Selling Platform' =
+			VAR r = TOPN(1, ALLSELECTED(DimConsole[console]), [Total Sales], DESC)
+			RETURN CONCATENATEX(r, DimConsole[console], ", ")
+
+	measure 'Peak Sales Year' =
+			VAR r = TOPN(1, ALLSELECTED(DimDate[year]), [Total Sales], DESC)
+			RETURN MAXX(r, DimDate[year])
+		formatString: 0
+
+	measure 'Takeaway 1' = "Peak year: " & [Peak Sales Year]
+
+	measure 'Takeaway 2' = "Top genre: " & [Best Selling Genre]
+
+	measure 'Takeaway 3' = "Top platform: " & [Best-Selling Platform] & " (" & FORMAT([Top Platform Market Share], "0%") & ")"
+
+	measure 'Takeaway 4' = "Top publisher: " & [Top Publisher]
+
+	partition AllMeasures = m
+		mode: import
+		source =
+				let
+				  Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				  #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

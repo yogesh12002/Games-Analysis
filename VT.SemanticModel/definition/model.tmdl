@@ -1,0 +1,28 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["FactGameSales","DimGame","DimConsole","DimGenre","DimPublisher","DimDeveloper","DimDate","AllMeasures"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table FactGameSales
+ref table DimGame
+ref table DimConsole
+ref table DimGenre
+ref table DimPublisher
+ref table DimDeveloper
+ref table DimDate
+ref table AllMeasures
+ref table DateTableTemplate_195208ed-fdc7-43c7-8e3a-1494ace8d1d3
+ref table LocalDateTable_f23fdcf6-d80c-42a3-8939-133df0893fbe
+
+ref cultureInfo en-GB
+

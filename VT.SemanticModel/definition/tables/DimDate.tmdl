@@ -1,0 +1,91 @@
+table DimDate
+	lineageTag: cba264d5-6798-45fe-8dba-0cd002d27f50
+
+	column release_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ecb816ff-4b74-406f-ba9e-fefbafba3a7f
+		summarizeBy: none
+		sourceColumn: release_date
+
+		variation Variation
+			isDefault
+			relationship: b46b2671-a2a9-4cc4-8d4a-2088fd1f2425
+			defaultHierarchy: LocalDateTable_f23fdcf6-d80c-42a3-8939-133df0893fbe.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Datekey
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d9f6c21-ae52-4851-8107-aa7813cb9791
+		summarizeBy: none
+		sourceColumn: Datekey
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+		lineageTag: b8154404-177a-40f3-b64a-edb61111c456
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_number
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: month_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month
+		sortByColumn: month_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column day
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: day
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+				  Source = Csv.Document(File.Contents("C:\Users\ygupt\Desktop\og\PowerBi AND Excel\csv\Assignment 4 - Video Games Sales (1980-2024) - Raw.csv"), [Delimiter = ",", Columns = 14, QuoteStyle = QuoteStyle.None]),
+				  #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"img", type text}, {"title", type text}, {"console", type text}, {"genre", type text}, {"publisher", type text}, {"developer", type text}, {"critic_score", type number}, {"total_sales", type number}, {"na_sales", type number}, {"jp_sales", type number}, {"pal_sales", type number}, {"other_sales", type number}, {"release_date", type text}, {"last_update", type text}}, "en-US"),
+				  #"Removed other columns" = Table.SelectColumns(#"Changed column type", {"release_date"}),
+				  #"Filtered rows" = Table.SelectRows(#"Removed other columns", each [release_date] <> null and [release_date] <> ""),
+				  #"Converted to date" = Table.TransformColumns(#"Filtered rows", {{"release_date", each try Date.From(_) otherwise null, type nullable date}}),
+				  #"Removed null dates" = Table.SelectRows(#"Converted to date", each [release_date] <> null),
+				  #"Removed duplicates" = Table.Distinct(#"Removed null dates", {"release_date"}),
+				  #"Added Datekey" = Table.AddColumn(#"Removed duplicates", "Datekey", each Date.Year([release_date]) * 10000 + Date.Month([release_date]) * 100 + Date.Day([release_date]), Int64.Type),
+				  #"Added year" = Table.AddColumn(#"Added Datekey", "year", each Date.Year([release_date]), Int64.Type),
+				  #"Added quarter" = Table.AddColumn(#"Added year", "quarter", each "Q" & Text.From(Date.QuarterOfYear([release_date])), type text),
+				  #"Added month_number" = Table.AddColumn(#"Added quarter", "month_number", each Date.Month([release_date]), Int64.Type),
+				  #"Added month" = Table.AddColumn(#"Added month_number", "month", each Date.ToText([release_date], "MMM", "en-US"), type text),
+				  #"Added day" = Table.AddColumn(#"Added month", "day", each Date.Day([release_date]), Int64.Type)
+				in
+				  #"Added day"
+
+	annotation PBI_ResultType = Table
+

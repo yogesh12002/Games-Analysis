@@ -1,0 +1,36 @@
+table DimGenre
+	lineageTag: 59996beb-de13-4499-a7be-e2f8b0a7d044
+
+	column genre
+		dataType: string
+		lineageTag: 265e55f7-7035-47ce-a37e-0cde3fa4b07a
+		summarizeBy: none
+		sourceColumn: genre
+
+		annotation SummarizationSetBy = Automatic
+
+	column genrekey
+		dataType: int64
+		formatString: 0
+		lineageTag: 3851f21a-07c5-4100-8998-137e6d170369
+		summarizeBy: none
+		sourceColumn: genrekey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimGenre = m
+		mode: import
+		source =
+				let
+				  Source = Csv.Document(File.Contents("C:\Users\ygupt\Desktop\og\PowerBi AND Excel\csv\Assignment 4 - Video Games Sales (1980-2024) - Raw.csv"), [Delimiter = ",", Columns = 14, QuoteStyle = QuoteStyle.None]),
+				  #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"img", type text}, {"title", type text}, {"console", type text}, {"genre", type text}, {"publisher", type text}, {"developer", type text}, {"critic_score", type number}, {"total_sales", type number}, {"na_sales", type number}, {"jp_sales", type number}, {"pal_sales", type number}, {"other_sales", type number}, {"release_date", type text}, {"last_update", type text}}, "en-US"),
+				  #"Removed other columns" = Table.SelectColumns(#"Changed column type", {"genre"}),
+				  #"Removed duplicates" = Table.Distinct(#"Removed other columns", {"genre"}),
+				  #"Added index" = Table.AddIndexColumn(#"Removed duplicates", "Index", 1, 1, Int64.Type),
+				  #"Renamed columns" = Table.RenameColumns(#"Added index", {{"Index", "genrekey"}})
+				in
+				  #"Renamed columns"
+
+	annotation PBI_ResultType = Table
+
